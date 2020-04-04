@@ -15,16 +15,15 @@ covid19 <- read.csv(tf);
 names(covid19)[1]<-"dateRep";
 covid19$dateRep<-as.Date(covid19$dateRep, format="%d/%m/%Y")
 
-covid19<-covid19[order(covid19$dateRep),];
-covid19<-covid19[order(covid19$countriesAndTerritories),]
-
 #### Calculate total cases
 covid19.sum <- aggregate(cbind(cases,deaths) ~ geoId, data = covid19, sum);
 names(covid19.sum)[2]<-"sumcases";
 names(covid19.sum)[3]<-"sumdeaths";
-tmp<-merge(covid19,covid19.sum, all=TRUE);
+covid19<-merge(covid19,covid19.sum, all=TRUE);
 
 #### Calculate daily cum cases
+covid19<-covid19[order(covid19$dateRep),];
+covid19<-covid19[order(covid19$countriesAndTerritories),]
 covid19$sumcases.d <- NA;
 covid19$sumdeaths.d <- NA;
 n<-length(levels(covid19$countriesAndTerritories))
@@ -32,7 +31,6 @@ for (i in 1:n) {
   covid19[covid19$countriesAndTerritories==levels(covid19$countriesAndTerritories)[i],"sumcases.d"] <- cumsum(covid19[covid19$countriesAndTerritories==levels(covid19$countriesAndTerritories)[i],"cases"]);
   covid19[covid19$countriesAndTerritories==levels(covid19$countriesAndTerritories)[i],"sumdeaths.d"] <- cumsum(covid19[covid19$countriesAndTerritories==levels(covid19$countriesAndTerritories)[i],"deaths"]);
 }
-
 
 covid19$newcases.pop <- covid19$cases*100000/covid19$popData2018;
 covid19$newdeaths.pop <- covid19$deaths*100000/covid19$popData2018;
