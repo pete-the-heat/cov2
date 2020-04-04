@@ -18,17 +18,11 @@ covid19$dateRep<-as.Date(covid19$dateRep, format="%d/%m/%Y")
 covid19<-covid19[order(covid19$dateRep),];
 covid19<-covid19[order(covid19$countriesAndTerritories),]
 
-covid19.sum <- aggregate(cbind(cases,deaths) ~ geoId, data = covid19, sum);
-
 #### Calculate total cases
-covid19$sumcases <- NA;
-covid19$sumdeaths <- NA;
-x<-length(covid19$dateRep);
-for (i in 1:x) {
-  covid19$sumcases[i] <- covid19.sum[covid19.sum$geoId==covid19$geoId[i],2]; 
-  covid19$sumdeaths[i] <- covid19.sum[covid19.sum$geoId==covid19$geoId[i],3];
-
-}
+covid19.sum <- aggregate(cbind(cases,deaths) ~ geoId, data = covid19, sum);
+names(covid19.sum)[2]<-"sumcases";
+names(covid19.sum)[3]<-"sumdeaths";
+tmp<-merge(covid19,covid19.sum, all=TRUE);
 
 #### Calculate daily cum cases
 covid19$sumcases.d <- NA;
